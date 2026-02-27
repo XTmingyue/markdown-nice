@@ -96,6 +96,45 @@ markdownParser
   .use(markdownItMultiquote) // 给多级引用加 class
   .use(markdownItImsize);
 
+// 将“单独一行的图片地址”自动转换为 Markdown 图片语法，便于预览区正确展示
+// 例如：
+//   https://example.com/foo.png
+// 会被转换为：
+//   ![](https://example.com/foo.png)
+export const preprocessMarkdown = (text) => {
+  if (!text) return text;
+  // 识别规则：
+  // 1. 将 GitHub blob 图片链接自动转换为 raw 直链
+  // 2. 单独一行，仅包含一个 http(s) URL
+  // 3. 该 URL 中包含常见图片格式关键字（如 .png / .jpg / jpeg / gif / webp / bmp / svg，或参数 f=JPEG 等）
+  const imageKeywordPattern = "(?:png|jpe?g|gif|webp|bmp|svg)";
+  const lineImageUrlReg = new RegExp(
+    "^\\s*(https?:\\/\\/\\S*(?:" +
+    "\\." +
+    imageKeywordPattern +
+    "\\b" + // 例如 https://xx.com/a.png?x=1
+    "|" +
+    "\\b" +
+    imageKeywordPattern +
+    "\\b" + // 例如 参数中包含 f=JPEG、format=png 等
+      ")\\S*)\\s*$",
+    "gim",
+  );
+  const githubBlobReg = new RegExp(
+    "^\\s*(https?:\\/\\/github\\.com\\/([^\\s/]+)\\/([^\\s/]+)\\/blob\\/([^\\s]+))\\s*$",
+    "gim",
+  );
+
+  // 先把 GitHub blob 链接转换为 raw 直链
+  let result = text.replace(githubBlobReg, (match, _full, owner, repo, rest) => {
+    return `https://raw.githubusercontent.com/${owner}/${repo}/${rest}`;
+  });
+
+  // 再将单独一行的图片地址转成 Markdown 图片语法
+  result = result.replace(lineImageUrlReg, "![]($1)");
+  return result;
+};
+
 export const replaceStyle = (id, css) => {
   const style = document.getElementById(id);
   try {

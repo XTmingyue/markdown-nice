@@ -31,7 +31,7 @@ import {
   THROTTLE_MATHJAX_TIME,
   THROTTLE_MD_RENDER_TIME,
 } from "./utils/constant";
-import {markdownParser, updateMathjax} from "./utils/helper";
+import {markdownParser, updateMathjax, preprocessMarkdown} from "./utils/helper";
 import pluginCenter from "./utils/pluginCenter";
 import appContext from "./utils/appContext";
 import {uploadAdaptor} from "./utils/imageHosting";
@@ -306,7 +306,9 @@ class App extends Component {
     const {isEditAreaOpen, isPreviewAreaOpen, isStyleEditorOpen, isImmersiveEditing} = this.props.view;
     const {isSearchOpen} = this.props.dialog;
 
-    const parseHtml = markdownParser.render(this.props.content.content);
+    const rawContent = this.props.content.content;
+    const preprocessedContent = preprocessMarkdown(rawContent);
+    const parseHtml = markdownParser.render(preprocessedContent);
 
     const mdEditingClass = classnames({
       "nice-md-editing": !isImmersiveEditing,
