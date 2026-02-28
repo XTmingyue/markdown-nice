@@ -6,15 +6,15 @@
 
 - 支持自定义样式的 Markdown 编辑器；
 - 支持微信公众号、知乎和稀土掘金；
-- 欢迎扫码回复「排版」加入用户群；
+- 欢迎关注我的公众号「飞鸟ontheway」；
 
-![公众号 & Markdown 排版](https://share.lovejade.cn/screenshots/desktop.png)
+![飞鸟ontheway](https://cdn.jsdelivr.net/gh/XTmingyue/image-bed/2026-2-28/1772267688697-344cac-WechatIMG171.jpeg)
 
 ## Markdown 简介
 
 [Markdown](https://nicelinks.site/tags/Markdown) 是一种轻量级标记语言，排版语法简洁，让人们更多地关注内容本身而非排版。它使用易读易写的纯文本格式编写文档，可与 HTML 混编，可导出 HTML、PDF 以及本身的 .md 格式的文件。因简洁、高效、易读、易写，Markdown 被大量使用，如 Github、ChatGPT、Wikipedia、 [倾城之链](https://nicelinks.site) 等。
 
-在线体验一下 [Markdown 在线编辑器](https://markdown.lovejade.cn/) 。
+在线体验一下 [Markdown 在线编辑器](https://markdown.mornveil.com/) 。
 
 千万不要被「标记」、「语言」吓到，Markdown 的语法十分简单，常用的标记符号不超过十个，用于日常写作记录绰绰有余，不到半小时就能完全掌握。
 
@@ -79,7 +79,7 @@ _这个是斜体_
 
 微信公众号仅支持公众号文章链接，即域名为`https://mp.weixin.qq.com/`的合法链接。使用方法如下所示：
 
-对于该论述，欢迎读者查阅之前发过的文章，[你是《未来世界的幸存者》么？](https://mp.weixin.qq.com/s/s5IhxV2ooX3JN_X416nidA)
+对于该论述，欢迎读者查阅之前发过的文章，[深入思考&追求极致](https://mp.weixin.qq.com/s/oHAAH67k6jeLq1iUsigclQ)
 
 ### 3.6 引用
 
@@ -93,9 +93,8 @@ _这个是斜体_
 >
 > [Markdown Nice 最全功能介绍](https://mp.weixin.qq.com/s/lM808MxUu6tp8zU8SBu3sg)
 >
-> ![这里写图片描述](https://share.lovejade.cn/screenshots/desktop.png)
+> 当使用多个 `>` 符号时，就会变成多级引用
 
-当使用多个 `>` 符号时，就会变成多级引用
 
 二级引用如下：
 
@@ -105,7 +104,7 @@ _这个是斜体_
 > >
 > > [Markdown Nice 最全功能介绍](https://mp.weixin.qq.com/s/lM808MxUu6tp8zU8SBu3sg)
 > >
-> > ![这里写图片描述](https://share.lovejade.cn/screenshots/desktop.png)
+> > 当使用多个 `>` 符号时，就会变成多级引用
 
 三级引用如下：
 
@@ -115,7 +114,7 @@ _这个是斜体_
 > > >
 > > > [Markdown Nice 最全功能介绍](https://mp.weixin.qq.com/s/lM808MxUu6tp8zU8SBu3sg)
 > > >
-> > > ![这里写图片描述](https://share.lovejade.cn/screenshots/desktop.png)
+> > > 当使用多个 `>` 符号时，就会变成多级引用
 
 ### 3.7 分割线
 
@@ -151,13 +150,13 @@ _这个是斜体_
 
 插入图片，如果是行内图片则无图例，否则有图例，格式如下：
 
-![这里写图片描述](https://share.lovejade.cn/screenshots/desktop.png)
+![这里写图片描述](https://cdn.jsdelivr.net/gh/XTmingyue/image-bed/2026-2-28/1772267688697-344cac-WechatIMG171.jpeg)
 
 可以通过在图片尾部添加宽度和高度控制图片大小，用法如下：
 
-![同时设置宽度和高度](https://share.lovejade.cn/screenshots/desktop.png =150x150)
+![同时设置宽度和高度](https://cdn.jsdelivr.net/gh/XTmingyue/image-bed/2026-2-28/1772267688697-344cac-WechatIMG171.jpeg=150x150)
 
-![只设置宽度，推荐使用百分比](https://share.lovejade.cn/screenshots/desktop.png =40%x)
+![只设置宽度，推荐使用百分比](https://cdn.jsdelivr.net/gh/XTmingyue/image-bed/2026-2-28/1772267688697-344cac-WechatIMG171.jpeg=40%x)
 
 该语法比较特殊，其他 Markdown 编辑器不完全通用。
 
@@ -172,7 +171,7 @@ _这个是斜体_
 
 图片还可以和链接嵌套使用，能够实现推荐卡片的效果，用法如下：
 
-[![Markdown Nice 最全功能介绍](https://lovejade.oss-cn-shenzhen.aliyuncs.com/dance.gif)](https://mp.weixin.qq.com/s/lM808MxUu6tp8zU8SBu3sg)
+[![深入思考&追求极致](https://lovejade.oss-cn-shenzhen.aliyuncs.com/dance.gif)](https://mp.weixin.qq.com/s/oHAAH67k6jeLq1iUsigclQ)
 
 ## 4. 特殊语法
 
@@ -318,7 +317,3 @@ Markdown Nice 这么好用，简直是{喜大普奔|hē hē hē hē}呀！
 ### 5.2 UML
 
 不支持，推荐使用开源工具`https://draw.io/`制作后再导入图片
-
-### 5.3 更多文档
-
-更多文档请参考 [markdown-nice-docs](https://preview.mdnice.com/articles/ "更多文档")![公众号 & Markdown 排版](https://share.lovejade.cn/screenshots/desktop.png)

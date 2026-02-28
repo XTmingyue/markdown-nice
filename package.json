@@ -6,12 +6,12 @@
   "private": false,
   "main": "lib/Lib.js",
   "module": "lib/Lib.js",
-  "homepage": "https://wechat.jeffjade.com/",
+  "homepage": "https://markdown.mornveil.com/",
   "license": "GPL-3.0",
   "typings": "./lib/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nicejade/markdown-nice"
+    "url": "https://github.com/XTmingyue/markdown-nice"
   },
   "scripts": {
     "start": "cross-env NODE_OPTIONS=--openssl-legacy-provider node scripts/start.js",
