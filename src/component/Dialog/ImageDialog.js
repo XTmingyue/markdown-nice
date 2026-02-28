@@ -25,6 +25,8 @@ const {Option} = Select;
 class ImageDialog extends Component {
   constructor(props) {
     super(props);
+    this.queue = [];
+    this.processing = false;
     this.images = [];
   }
 
@@ -56,42 +58,107 @@ class ImageDialog extends Component {
     markdownEditor.focus();
   };
 
-  handleCancel = () => {
-    this.props.dialog.setImageOpen(false);
+  enqueue = (task) => {
+    this.queue.push(task);
+    if (!this.processing) {
+      this.processNext();
+    }
   };
 
-  customRequest = ({action, data, file, headers, onError, onProgress, onSuccess, withCredentials}) => {
+  processNext = () => {
+    if (this.processing) return;
+    const task = this.queue.shift();
+    if (!task) {
+      this.processing = false;
+      return;
+    }
+    this.processing = true;
+
+    const {action, data, file, headers, onError, onProgress, onSuccess, withCredentials} = task;
     const formData = new FormData();
-    const {images} = this;
     if (data) {
       Object.keys(data).forEach((key) => {
         formData.append(key, data[key]);
       });
     }
-    // 使用阿里云图床
+
+    const finish = (cb) => (...args) => {
+      try {
+        cb && cb(...args);
+      } finally {
+        this.processing = false;
+        this.processNext();
+      }
+    };
+
+    // 与原 customRequest 相同的路由逻辑，但序列化执行
     if (this.props.imageHosting.type === "阿里云") {
-      uploadAdaptor({file, onSuccess, onError, images});
+      uploadAdaptor({
+        file,
+        onSuccess: finish(onSuccess),
+        onError: finish(onError),
+        images: this.images,
+      });
+    } else if (this.props.imageHosting.type === "七牛云") {
+      uploadAdaptor({
+        file,
+        onSuccess: finish(onSuccess),
+        onError: finish(onError),
+        onProgress,
+        images: this.images,
+      });
+    } else if (this.props.imageHosting.type === "SM.MS") {
+      uploadAdaptor({
+        formData,
+        file,
+        action,
+        onProgress,
+        onSuccess: finish(onSuccess),
+        onError: finish(onError),
+        headers,
+        withCredentials,
+      });
+    } else if (this.props.imageHosting.type === "Gitee") {
+      uploadAdaptor({
+        formData,
+        file,
+        action,
+        onProgress,
+        onSuccess: finish(onSuccess),
+        onError: finish(onError),
+        headers,
+        withCredentials,
+        images: this.images,
+      });
+    } else if (this.props.imageHosting.type === "GitHub") {
+      uploadAdaptor({
+        formData,
+        file,
+        action,
+        onProgress,
+        onSuccess: finish(onSuccess),
+        onError: finish(onError),
+        headers,
+        withCredentials,
+        images: this.images,
+      });
+    } else {
+      uploadAdaptor({
+        formData,
+        file,
+        onSuccess: finish(onSuccess),
+        onError: finish(onError),
+        images: this.images,
+      });
     }
-    // 使用七牛云图床
-    else if (this.props.imageHosting.type === "七牛云") {
-      uploadAdaptor({file, onSuccess, onError, onProgress, images});
-    }
-    // 使用SM.MS图床
-    else if (this.props.imageHosting.type === "SM.MS") {
-      uploadAdaptor({formData, file, action, onProgress, onSuccess, onError, headers, withCredentials});
-    }
-    // 使用Gitee图床
-    else if (this.props.imageHosting.type === "Gitee") {
-      uploadAdaptor({formData, file, action, onProgress, onSuccess, onError, headers, withCredentials, images});
-    }
-    // 使用GitHub图床
-    else if (this.props.imageHosting.type === "GitHub") {
-      uploadAdaptor({formData, file, action, onProgress, onSuccess, onError, headers, withCredentials, images});
-    }
-    // 使用用户提供的图床或是默认mdnice图床
-    else {
-      uploadAdaptor({formData, file, onSuccess, onError, images});
-    }
+  };
+
+  handleCancel = () => {
+    this.props.dialog.setImageOpen(false);
+  };
+
+  customRequest = ({action, data, file, headers, onError, onProgress, onSuccess, withCredentials}) => {
+    this.enqueue({action, data, file, headers, onError, onProgress, onSuccess, withCredentials});
 
     return {
       abort() {
