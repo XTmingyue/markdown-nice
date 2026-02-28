@@ -5,6 +5,7 @@ import classnames from "classnames";
 import {WECHAT_OFFICIAL_ACCOUNT_LABEL} from "../utils/constant";
 import File from "../component/MenuLeft/File";
 import Pattern from "../component/MenuLeft/Pattern";
+import ImageButton from "../component/MenuLeft/ImageButton";
 import Function from "../component/MenuLeft/Function";
 import Theme from "../component/MenuLeft/Theme";
 import CodeTheme from "../component/MenuLeft/CodeTheme";
@@ -35,6 +36,7 @@ class Navbar extends Component {
           )}
           <File />
           <Pattern />
+          <ImageButton />
           <Function />
           <View />
           <Theme token={token} />

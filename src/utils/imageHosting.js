@@ -32,6 +32,10 @@ function hideUploadNoti() {
   message.success("图片上传成功");
 }
 
+function hideUploadNotiOnError() {
+  message.destroy();
+}
+
 function writeToEditor({content, image}) {
   const isContainImgName = window.localStorage.getItem(IS_CONTAIN_IMG_NAME) === "true";
   let text = "";
@@ -188,7 +192,7 @@ export const customImageUpload = async ({
       hideUploadNoti();
     }, 500);
   } catch (error) {
-    message.destroy();
+    hideUploadNotiOnError();
     uploadError(error.toString());
     onError(error, error.toString());
   }
@@ -241,7 +245,7 @@ export const smmsUpload = ({
       }, 500);
     })
     .catch((error) => {
-      hideUploadNoti();
+      hideUploadNotiOnError();
       uploadError(error.toString());
       onError(error, error.toString());
     });
@@ -281,7 +285,7 @@ const aliOSSPutObject = ({config, file, buffer, onSuccess, onError, images, cont
     .catch((error) => {
       console.log(error);
 
-      hideUploadNoti();
+      hideUploadNotiOnError();
       uploadError("请根据文档检查配置项");
       onError(error, error.toString());
     });
@@ -351,7 +355,11 @@ export const giteeUpload = ({
     const seperator = "-";
     const dir = date.getFullYear() + seperator + (date.getMonth() + 1) + seperator + date.getDate();
 
-    const dateFilename = new Date().getTime() + "-" + file.name;
+    // 使用时间戳 + 随机串，避免多张图片在同一毫秒内生成相同文件名
+    const uniqueSuffix = `${Date.now()}-${Math.random()
+      .toString(16)
+      .slice(2, 8)}`;
+    const dateFilename = `${uniqueSuffix}-${file.name}`;
     const url = `https://gitee.com/api/v5/repos/${config.username}/${config.repo}/contents/${dir}/${dateFilename}`;
 
     formData.append("content", base64);
@@ -391,8 +399,8 @@ export const giteeUpload = ({
           hideUploadNoti();
         }, 500);
       })
-      .catch((error, info) => {
-        hideUploadNoti();
+      .catch((error) => {
+        hideUploadNotiOnError();
         uploadError(error.toString() + " 可能存在图片名重复等问题");
         onError(error, error.toString() + " 可能存在图片名重复等问题");
       });
@@ -401,7 +409,6 @@ export const giteeUpload = ({
 
 // GitHub存储上传
 export const githubUpload = ({
-  formData = new FormData(),
   file = {},
   onProgress = () => {},
   onSuccess = () => {},
@@ -425,18 +432,28 @@ export const githubUpload = ({
     const seperator = "-";
     const dir = date.getFullYear() + seperator + (date.getMonth() + 1) + seperator + date.getDate();
 
-    const dateFilename = new Date().getTime() + "-" + file.name;
-    const url = `https://api.github.com/repos/${config.username}/${config.repo}/contents/${dir}/${dateFilename}?access_token=${config.token}`;
+    const uniqueSuffix = `${Date.now()}-${Math.random()
+      .toString(16)
+      .slice(2, 8)}`;
+    const dateFilename = `${uniqueSuffix}-${file.name}`;
+    const relativePath = `${dir}/${dateFilename}`;
+    const url = `https://api.github.com/repos/${config.username}/${config.repo}/contents/${relativePath}`;
 
     const data = {
       content: base64,
       message: "mdnice upload picture",
     };
 
+    // Classic PAT（ghp_/gho_）用 token；Fine-grained（github_pat_）用 Bearer
+    const authHeader = config.token.indexOf("github_pat_") === 0 ? `Bearer ${config.token}` : `token ${config.token}`;
+
     axios
       .put(url, data, {
         withCredentials,
-        headers,
+        headers: {
+          ...headers,
+          Authorization: authHeader,
+        },
         onUploadProgress: ({total, loaded}) => {
           onProgress(
             {
@@ -456,12 +473,21 @@ export const githubUpload = ({
 
         const imageUrl =
           config.jsdelivr === "true"
-            ? `https://cdn.jsdelivr.net/gh/${config.username}/${config.repo}/${dir}/${dateFilename}`
+            ? `https://cdn.jsdelivr.net/gh/${config.username}/${config.repo}/${relativePath}`
             : response.content.download_url;
+
+        const rawUrl = response.content.download_url;
+        const blobUrl = response.content.html_url;
+        const jsdelivrUrl = `https://cdn.jsdelivr.net/gh/${config.username}/${config.repo}/${relativePath}`;
+        const markdown = `![](${encodeURI(imageUrl)})`;
 
         const image = {
           filename,
           url: encodeURI(imageUrl),
+          rawUrl: encodeURI(rawUrl),
+          blobUrl,
+          jsdelivrUrl: encodeURI(jsdelivrUrl),
+          markdown,
         };
         if (content) {
           writeToEditor({content, image});
@@ -472,9 +498,23 @@ export const githubUpload = ({
           hideUploadNoti();
         }, 500);
       })
-      .catch((error, info) => {
-        hideUploadNoti();
-        uploadError(error.toString());
+      .catch((error) => {
+        hideUploadNotiOnError();
+        const status = error.response && error.response.status;
+        let tip = "";
+        if (status === 401) {
+          tip =
+            " 请检查：token 是否填对、是否过期；若为 Classic PAT 需勾选 repo；若为 Fine-grained 需给该仓库 Contents 读+写。";
+        } else if (status === 403) {
+          tip = " 请检查：token 权限、仓库是否在组织下（需对 token 做 SSO 授权）、或 GitHub 限流。";
+        } else if (status === 409) {
+          tip = " 文件路径冲突，请重试或换一张图。";
+        } else if (status === 422) {
+          tip = " 请检查：用户名/仓库名是否正确、仓库是否存在、token 是否有写权限。";
+        } else {
+          tip = " 请检查 token 权限、仓库权限与 SSO（组织仓库）。";
+        }
+        uploadError((error.message || error.toString()) + tip);
         onError(error, error.toString());
       });
   };

@@ -28,6 +28,25 @@
   cursor: pointer;
 }
 
+.nice-top-upload {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.nice-top-upload-status {
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+.nice-top-upload-status-uploading {
+  color: #999;
+}
+
+.nice-top-upload-status-success {
+  color: #52c41a;
+}
+
 .nice-link {
   margin-right: 10px;
 }
