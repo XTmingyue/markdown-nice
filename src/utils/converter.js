@@ -105,25 +105,40 @@ export const addJuejinSuffix = () => {
 const H1_PREFIX_INLINE_STYLE = "display:inline-block;background:rgb(37,132,181);color:white;padding:2px 8px;";
 
 // 若当前主题使用 CSS counter 生成标题前缀（如雁栖湖的 Part 1），复制时 juice 不会解析 counter()
-// 导致粘贴到公众号出现 "Part'counter(counterh1)"。复制前将 "Part N" 写入 h1 的 .prefix，并去掉 h1:before 的 content
+// 导致粘贴到公众号出现 "Part'counter(counterh1)" 或 "counter(counterh2)"。复制前将 "Part N" 写入 h1 的 .prefix，
+// 并去掉 h1/h2... 的 :before content，避免字面量粘贴
 function resolveCounterPrefixForCopy(container, markdownStyle) {
-  if (!container || !markdownStyle || !/counter\(counterh1\)/.test(markdownStyle)) return markdownStyle;
-  const h1List = container.querySelectorAll("h1");
-  let n = 0;
-  h1List.forEach((h1) => {
-    const prefix = h1.querySelector(".prefix");
-    if (prefix) {
-      n += 1;
-      prefix.textContent = `Part ${n}`;
-      // .prefix 在主题里多为空，复制后无样式会导致公众号不显示。加上与 h1:before 一致的内联样式
-      prefix.setAttribute("style", H1_PREFIX_INLINE_STYLE);
+  if (!container || !markdownStyle) return markdownStyle;
+
+  // 处理 h1 的 Part N
+  if (/counter\(counterh1\)/.test(markdownStyle)) {
+    const h1List = container.querySelectorAll("h1");
+    let n = 0;
+    h1List.forEach((h1) => {
+      const prefix = h1.querySelector(".prefix");
+      if (prefix) {
+        n += 1;
+        prefix.textContent = `Part ${n}`;
+        // .prefix 在主题里多为空，复制后无样式会导致公众号不显示。加上与 h1:before 一致的内联样式
+        prefix.setAttribute("style", H1_PREFIX_INLINE_STYLE);
+      }
+    });
+    markdownStyle = markdownStyle.replace(
+      /(#nice\s+h1\s*:before\s*\{[\s\S]*?)content\s*:\s*[^;]+;/g,
+      "$1content: none; display: none;",
+    );
+  }
+
+  // 统一移除 h2-h6 使用 counter 的 :before content，避免 "counter(counterh2)" 被内联为字面量
+  for (let level = 2; level <= 6; level++) {
+    const counterReg = new RegExp(`counter\\(counterh${level}\\)`);
+    if (counterReg.test(markdownStyle)) {
+      const beforeReg = new RegExp(`(#nice\\s+h${level}\\s*:before\\s*\\{[\\s\\S]*?)content\\s*:\\s*[^;]+;`, "g");
+      markdownStyle = markdownStyle.replace(beforeReg, "$1content: none; display: none;");
     }
-  });
-  // 去掉 h1:before 的 content 并令其不占位，避免 juice 内联出字面量且不留空白
-  return markdownStyle.replace(
-    /(#nice\s+h1\s*:before\s*\{[\s\S]*?)content\s*:\s*[^;]+;/g,
-    "$1content: none; display: none;",
-  );
+  }
+
+  return markdownStyle;
 }
 
 export const solveHtml = () => {
