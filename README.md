@@ -12,6 +12,10 @@
 - 支持微信公众号、知乎、稀土掘金平台；
 - Fork 自 [markdown-nice](https://github.com/mdnice/markdown-nice)，支持[在线使用](https://wechat.jeffjade.com/)；
 
+## **在线使用时图床配置是否会泄漏？** 
+
+- 不会。图床信息（如 GitHub 用户名、仓库名、token）仅保存在**当前用户浏览器**的 localStorage 中，上传时由浏览器直连 GitHub 等接口，部署方只提供静态页面，不接收、不存储任何图床凭证。
+
 ## 本地开发与部署
 
 ### 环境要求
@@ -46,15 +50,9 @@ PORT=3001 npm start
 npm run build
 ```
 
-- 构建完成后，会在项目根目录生成 `build` 目录
-- 将 `build` 目录中的静态文件部署到任意静态服务器即可对外提供服务
-
-
 ### 图片上传与插图推荐方式
 - 可直接粘贴图片的网络地址
 - GitHub 图床（通过顶栏「图片」使用）
   - 通过顶栏 **「图片」** 打开上传弹窗，在弹窗内将图床切换为 **GitHub** 并配置后，即可上传图片到 GitHub 仓库。
   - 可提前在Github中创建一个空的项目作为图床
   - token的获取方式：github账户 -> Settings -> Developer Settings -> Personal access tokens -> Tokens 可选择仅针对图床项目创建
-
-**图床配置是否会泄漏？** 不会。图床信息（如 GitHub 用户名、仓库名、token）仅保存在**当前用户浏览器**的 localStorage 中，上传时由浏览器直连 GitHub 等接口，部署方只提供静态页面，不接收、不存储任何图床凭证。
