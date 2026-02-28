@@ -91,7 +91,7 @@ _这个是斜体_
 >
 > 读一本好书，就是在和高尚的人谈话。 **——歌德**
 >
-> [Markdown Nice 最全功能介绍](https://mp.weixin.qq.com/s/lM808MxUu6tp8zU8SBu3sg)
+> [技术深度](https://mp.weixin.qq.com/s/MtyZDH-4wbb6tLtb3sAjzw)
 >
 > 当使用多个 `>` 符号时，就会变成多级引用
 
@@ -102,7 +102,7 @@ _这个是斜体_
 > >
 > > 读一本好书，就是在和高尚的人谈话。 **——歌德**
 > >
-> > [Markdown Nice 最全功能介绍](https://mp.weixin.qq.com/s/lM808MxUu6tp8zU8SBu3sg)
+> > [技术深度](https://mp.weixin.qq.com/s/MtyZDH-4wbb6tLtb3sAjzw)
 > >
 > > 当使用多个 `>` 符号时，就会变成多级引用
 
@@ -112,7 +112,7 @@ _这个是斜体_
 > > >
 > > > 读一本好书，就是在和高尚的人谈话。 **——歌德**
 > > >
-> > > [Markdown Nice 最全功能介绍](https://mp.weixin.qq.com/s/lM808MxUu6tp8zU8SBu3sg)
+> > > [技术深度](https://mp.weixin.qq.com/s/MtyZDH-4wbb6tLtb3sAjzw)
 > > >
 > > > 当使用多个 `>` 符号时，就会变成多级引用
 
@@ -154,9 +154,9 @@ _这个是斜体_
 
 可以通过在图片尾部添加宽度和高度控制图片大小，用法如下：
 
-![同时设置宽度和高度](https://cdn.jsdelivr.net/gh/XTmingyue/image-bed/2026-2-28/1772267688697-344cac-WechatIMG171.jpeg=150x150)
+![同时设置宽度和高度](https://cdn.jsdelivr.net/gh/XTmingyue/image-bed/2026-2-28/1772267688697-344cac-WechatIMG171.jpeg =150x150)
 
-![只设置宽度，推荐使用百分比](https://cdn.jsdelivr.net/gh/XTmingyue/image-bed/2026-2-28/1772267688697-344cac-WechatIMG171.jpeg=40%x)
+![只设置宽度，推荐使用百分比](https://cdn.jsdelivr.net/gh/XTmingyue/image-bed/2026-2-28/1772267688697-344cac-WechatIMG171.jpeg =40%x)
 
 该语法比较特殊，其他 Markdown 编辑器不完全通用。
 
