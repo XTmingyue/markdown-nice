@@ -110,6 +110,25 @@ const H1_PREFIX_INLINE_STYLE = "display:inline-block;background:rgb(37,132,181);
 function resolveCounterPrefixForCopy(container, markdownStyle) {
   if (!container || !markdownStyle) return markdownStyle;
 
+  const getInlineStyle = (selector) => {
+    const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const reg = new RegExp(`${escaped}\\s*\\{([\\s\\S]*?)\\}`, "m");
+    const match = markdownStyle.match(reg);
+    if (!match) return "";
+    const inline = match[1]
+      .split(";")
+      .map((item) => item.trim())
+      .filter((item) => item && !/^content\s*:/.test(item) && !/^counter-increment\s*:/.test(item))
+      .join("; ");
+    return inline ? `${inline};` : "";
+  };
+
+  const getMergedInlineStyle = (selectors) =>
+    selectors
+      .map((selector) => getInlineStyle(selector))
+      .filter(Boolean)
+      .join(" ");
+
   // 处理 h1 的 Part N
   if (/counter\(counterh1\)/.test(markdownStyle)) {
     const h1List = container.querySelectorAll("h1");
@@ -133,8 +152,36 @@ function resolveCounterPrefixForCopy(container, markdownStyle) {
   for (let level = 2; level <= 6; level++) {
     const counterReg = new RegExp(`counter\\(counterh${level}\\)`);
     if (counterReg.test(markdownStyle)) {
+      const prefixStyle = getMergedInlineStyle([`#nice h${level} .prefix`, `#nice h${level} .prefix:before`]);
+      const headingList = container.querySelectorAll(`h${level}`);
+      let n = 0;
+      headingList.forEach((heading) => {
+        const prefix = heading.querySelector(".prefix");
+        if (prefix) {
+          n += 1;
+          prefix.textContent = `${n}`;
+          if (prefixStyle) {
+            // 强制 vertical-align: bottom 以确保与 content 对齐
+            prefix.setAttribute("style", `${prefixStyle}; vertical-align: bottom;`);
+          }
+          // 只有当存在 prefix 时，才强制 content 为 inline-block 并底部对齐，
+          // 这样可以解决两个 inline 元素（或 inline-block）基线对齐导致的下划线错位问题
+          const content = heading.querySelector(".content");
+          if (content) {
+            const currentStyle = content.getAttribute("style") || "";
+            // 追加 display: inline-block 和 vertical-align: bottom
+            // 注意：juice 后续会内联 CSS，但行内 style 优先级高，或者会被 juice 合并保留
+            content.setAttribute("style", `${currentStyle}; display: inline-block; vertical-align: bottom;`);
+          }
+        }
+      });
       const beforeReg = new RegExp(`(#nice\\s+h${level}\\s*:before\\s*\\{[\\s\\S]*?)content\\s*:\\s*[^;]+;`, "g");
       markdownStyle = markdownStyle.replace(beforeReg, "$1content: none; display: none;");
+      const prefixBeforeReg = new RegExp(
+        `(#nice\\s+h${level}\\s+\\.prefix\\s*:before\\s*\\{[\\s\\S]*?)content\\s*:\\s*[^;]+;`,
+        "g",
+      );
+      markdownStyle = markdownStyle.replace(prefixBeforeReg, "$1content: none; display: none;");
     }
   }
 
