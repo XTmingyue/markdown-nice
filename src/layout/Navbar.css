@@ -24,6 +24,10 @@
   margin-right: 20px;
 }
 
+.nice-right-nav .nice-link {
+  cursor: pointer;
+}
+
 .nice-link {
   margin-right: 10px;
 }

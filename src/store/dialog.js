@@ -17,6 +17,8 @@ class Dialog {
 
   @observable isSitDownOpen = false;
 
+  @observable isWechatQrOpen = false;
+
   @observable isTutorialOpen = false;
 
   @observable tutorialTitle;
@@ -63,6 +65,11 @@ class Dialog {
   @action
   setSitDownOpen = (isSitDownOpen) => {
     this.isSitDownOpen = isSitDownOpen;
+  };
+
+  @action
+  setWechatQrOpen = (isWechatQrOpen) => {
+    this.isWechatQrOpen = isWechatQrOpen;
   };
 
   @action

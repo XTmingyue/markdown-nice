@@ -38,6 +38,10 @@ export const MARKDOWN_THEME_ID = "markdown-theme";
 export const FONT_THEME_ID = "font-theme";
 export const LAYOUT_ID = "nice";
 export const BOX_ID = "nice-rich-text-box";
+
+// 右上角导航：点击后弹出公众号二维码。将二维码图片放到 public 目录下，此处填路径（如 /wechat-qr.png）；或填完整图片 URL
+export const WECHAT_QR_IMAGE = "/wechat-qr.png";
+export const WECHAT_OFFICIAL_ACCOUNT_LABEL = "我的公众号";
 export const IMAGE_HOSTING_NAMES = {
   smms: "SM.MS",
   aliyun: "阿里云",

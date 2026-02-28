@@ -101,13 +101,47 @@ export const addJuejinSuffix = () => {
   element.appendChild(suffix);
 };
 
+// 雁栖湖等主题 h1:before 的样式（用于复制时给 .prefix 加内联样式，避免粘贴到公众号后 Part 不显示）
+const H1_PREFIX_INLINE_STYLE = "display:inline-block;background:rgb(37,132,181);color:white;padding:2px 8px;";
+
+// 若当前主题使用 CSS counter 生成标题前缀（如雁栖湖的 Part 1），复制时 juice 不会解析 counter()
+// 导致粘贴到公众号出现 "Part'counter(counterh1)"。复制前将 "Part N" 写入 h1 的 .prefix，并去掉 h1:before 的 content
+function resolveCounterPrefixForCopy(container, markdownStyle) {
+  if (!container || !markdownStyle || !/counter\(counterh1\)/.test(markdownStyle)) return markdownStyle;
+  const h1List = container.querySelectorAll("h1");
+  let n = 0;
+  h1List.forEach((h1) => {
+    const prefix = h1.querySelector(".prefix");
+    if (prefix) {
+      n += 1;
+      prefix.textContent = `Part ${n}`;
+      // .prefix 在主题里多为空，复制后无样式会导致公众号不显示。加上与 h1:before 一致的内联样式
+      prefix.setAttribute("style", H1_PREFIX_INLINE_STYLE);
+    }
+  });
+  // 去掉 h1:before 的 content 并令其不占位，避免 juice 内联出字面量且不留空白
+  return markdownStyle.replace(
+    /(#nice\s+h1\s*:before\s*\{[\s\S]*?)content\s*:\s*[^;]+;/g,
+    "$1content: none; display: none;",
+  );
+}
+
 export const solveHtml = () => {
   const element = document.getElementById(BOX_ID);
+  const container = element && element.children[0];
 
-  const inner = element.children[0].children;
+  const inner = container ? container.children : [];
   for (const item of inner) {
     item.setAttribute("data-tool", "mdnice编辑器");
   }
+
+  const basicStyle = document.getElementById(BASIC_THEME_ID).innerText;
+  let markdownStyle = document.getElementById(MARKDOWN_THEME_ID).innerText;
+  const codeStyle = document.getElementById(CODE_THEME_ID).innerText;
+  const fontStyle = document.getElementById(FONT_THEME_ID).innerText;
+
+  markdownStyle = resolveCounterPrefixForCopy(container, markdownStyle);
+
   let html = element.innerHTML;
   html = html.replace(/<mjx-container (class="inline.+?)<\/mjx-container>/g, "<span $1</span>");
   html = html.replace(/\s<span class="inline/g, '&nbsp;<span class="inline');
@@ -115,10 +149,6 @@ export const solveHtml = () => {
   html = html.replace(/mjx-container/g, "section");
   html = html.replace(/class="mjx-solid"/g, 'fill="none" stroke-width="70"');
   html = html.replace(/<mjx-assistive-mml.+?<\/mjx-assistive-mml>/g, "");
-  const basicStyle = document.getElementById(BASIC_THEME_ID).innerText;
-  const markdownStyle = document.getElementById(MARKDOWN_THEME_ID).innerText;
-  const codeStyle = document.getElementById(CODE_THEME_ID).innerText;
-  const fontStyle = document.getElementById(FONT_THEME_ID).innerText;
   let res = "";
   try {
     res = juice.inlineContent(html, basicStyle + markdownStyle + codeStyle + fontStyle, {

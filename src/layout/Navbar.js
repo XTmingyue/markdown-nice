@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import {observer, inject} from "mobx-react";
 import classnames from "classnames";
 
+import {WECHAT_OFFICIAL_ACCOUNT_LABEL} from "../utils/constant";
 import File from "../component/MenuLeft/File";
 import Pattern from "../component/MenuLeft/Pattern";
 import Function from "../component/MenuLeft/Function";
@@ -13,11 +14,13 @@ import View from "../component/MenuLeft/View";
 import "./Navbar.css";
 
 @inject("view")
+@inject("dialog")
 @observer
 class Navbar extends Component {
   render() {
     const {title, token} = this.props;
     const {isImmersiveEditing} = this.props.view;
+    const {dialog} = this.props;
     const niceNavbarClass = classnames({
       "nice-navbar": true,
       "nice-navbar-hide": isImmersiveEditing,
@@ -39,30 +42,15 @@ class Navbar extends Component {
           <Setting />
         </div>
         <div className="nice-right-nav">
-          <a
+          <span
             className="nice-title nice-link"
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://niceshare.site/?ref=wechat.jeffjade.com"
+            role="button"
+            tabIndex={0}
+            onClick={() => dialog.setWechatQrOpen(true)}
+            onKeyDown={(e) => e.key === "Enter" && dialog.setWechatQrOpen(true)}
           >
-            逍遥自在轩
-          </a>
-          <a
-            className="nice-title nice-link"
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://www.jeffjade.com/nicelinks/?ref=wechat.jeffjade.com"
-          >
-            晚晴幽草轩
-          </a>
-          <a
-            className="nice-title nice-link"
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://www.thebettersites.com/?ref=wechat.jeffjade.com"
-          >
-            清风明月轩
-          </a>
+            {WECHAT_OFFICIAL_ACCOUNT_LABEL}
+          </span>
         </div>
       </div>
     );
