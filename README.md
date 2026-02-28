@@ -14,13 +14,13 @@
 
 ## 本仓库改动说明
 
-- **支持直接粘贴网络图片链接**：对于网络图片可直接粘贴地址，不需要上传图片。\n
-- **支持多张图片上传**：对于非网络图片，如本地图片、notion笔记中的图片，需要先通过「图片」弹窗进行上传，可同时选择多张图片上传。\n
+- **支持直接粘贴网络图片链接**：对于网络图片可直接粘贴地址，不需要上传图片。
+- **支持多张图片上传**：对于非网络图片，如本地图片、notion笔记中的图片，需要先通过「图片」弹窗进行上传，可同时选择多张图片上传。
 
 ## 安全说明（图床信息是否会泄漏？）
 
-- 不会。图床信息（如 GitHub 用户名、仓库名、token）仅保存在**当前用户浏览器**的 localStorage 中；上传时由浏览器直连 GitHub 等接口。\n
-- 部署方只提供静态页面，不接收、不存储任何图床凭证。\n
+- 不会。图床信息（如 GitHub 用户名、仓库名、token）仅保存在**当前用户浏览器**的 localStorage 中；上传时由浏览器直连 GitHub 等接口。
+- 部署方只提供静态页面，不接收、不存储任何图床凭证。
 - 建议在公用设备使用后清除站点数据，token 尽量采用 Fine-grained PAT 并只授权图床仓库。
 
 ## 本地开发
@@ -67,12 +67,12 @@ npm run build
 
 ### 前置准备
 
-- 在 GitHub 创建一个仓库作为图床（建议公开仓库，配合 jsDelivr 更快）。\n
-- 准备 token：GitHub → Settings → Developer Settings → Personal access tokens。\n
-  - Fine-grained PAT：对图床仓库授权 **Contents: Read and write**。\n
+- 在 GitHub 创建一个仓库作为图床（建议公开仓库，配合 jsDelivr 更快）。
+- 准备 token：GitHub → Settings → Developer Settings → Personal access tokens
+  - Fine-grained PAT：对图床仓库授权 **Contents: Read and write**
   - token 只会在创建时显示一次，请自行妥善保存；丢失需重新生成。
 
 ### 使用方式
 
-- 配置完成后，在「图片」弹窗中选择图片上传（可多选）。\n
+- 配置完成后，在「图片」弹窗中选择图片上传（可多选）。
 - 上传完成后可将图片链接插入编辑器或用于复制粘贴。
